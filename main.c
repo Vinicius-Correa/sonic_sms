@@ -1,6 +1,7 @@
 #include <genesis.h>
 
 #include "sprite.h"
+#include "gfx.h"
 
 #define ANIM_STAND      0
 #define ANIM_WAIT       1
@@ -26,27 +27,39 @@
 #define MAX_POSY        FIX32(156)
 
 Sprite* spr_sonic;
+Map* map = NULL;
 
 int main() {
+    u16 palette[64];
+    //u16 ind;
 
     // disable interrupt when accessing VDP
     SYS_disableInts();
     // initialization
     VDP_setScreenWidth320();
+
+    //VDP_setTextPalette(PAL0);
+
     // init sprites engine
-    SPR_init(0, 0, 0);
-    // set sonic palette
-    VDP_setPalette(PAL0,sonic_sprite.palette->data);
+    SPR_init(16, 256, 256);
 
-    //load background
+    VDP_setPalette(PAL2, sonic_sprite.palette->data);
 
-
-    // VDP process done, we can re enable interrupts
     SYS_enableInts();
 
+    // prepare palettes
+    memcpy(&palette[0], sonic_sprite.palette->data, 16 * 2);
+
+
+    VDP_setPalette(PAL1, cenario.palette->data);
+    VDP_loadTileSet(cenario.tileset, 10, TRUE);
+    map = unpackMap(cenario.map, NULL);
+    VDP_setMapEx(PLAN_A, map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE,10), 0, 0, 0, 13, 64, 32);
+
+
     // init sonic sprite
-    spr_sonic = SPR_addSprite(&sonic_sprite, 128, 128, TILE_ATTR(PAL0, TRUE, FALSE,  FALSE));
-    SPR_setAnim(spr_sonic, 7);
+    spr_sonic = SPR_addSprite(&sonic_sprite, 128, 153, TILE_ATTR(PAL2, TRUE, FALSE,  FALSE));
+    SPR_setAnim(spr_sonic, ANIM_STAND);
 
     while(TRUE) {
         SPR_update();
