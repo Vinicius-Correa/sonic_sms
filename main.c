@@ -31,15 +31,11 @@ Map* map = NULL;
 
 int main() {
     u16 palette[64];
-    //u16 ind;
 
     // disable interrupt when accessing VDP
     SYS_disableInts();
     // initialization
     VDP_setScreenWidth320();
-
-    //VDP_setTextPalette(PAL0);
-
     // init sprites engine
     SPR_init(16, 256, 256);
 
@@ -50,12 +46,10 @@ int main() {
     // prepare palettes
     memcpy(&palette[0], sonic_sprite.palette->data, 16 * 2);
 
-
     VDP_setPalette(PAL1, cenario.palette->data);
     VDP_loadTileSet(cenario.tileset, 10, TRUE);
     map = unpackMap(cenario.map, NULL);
     VDP_setMapEx(PLAN_A, map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE,10), 0, 0, 0, 13, 64, 32);
-
 
     // init sonic sprite
     spr_sonic = SPR_addSprite(&sonic_sprite, 128, 153, TILE_ATTR(PAL2, TRUE, FALSE,  FALSE));
