@@ -1,4 +1,4 @@
-# Study of the development of platform games using the SGDK tool.
+## Study of the development of platform games using the SGDK tool
 
 Pendencies:
 1. Generate collision arrays;
