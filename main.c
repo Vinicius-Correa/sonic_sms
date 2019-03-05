@@ -84,29 +84,27 @@ int main() {
     return 0;
 }
 
-static void updatePhysic()
-{
-    u16 i;
-
+static void updatePhysic() {
     // sonic physic
-    if (xorder > 0)
-    {
+    if (xorder > 0) {
         movx += ACCEL;
         // going opposite side, quick breaking
-        if (movx < 0) movx += ACCEL;
+        if (movx < 0)
+            movx += ACCEL;
 
-        if (movx >= MAX_SPEED) movx = MAX_SPEED;
+        if (movx >= MAX_SPEED)
+            movx = MAX_SPEED;
     }
-    else if (xorder < 0)
-    {
+    else if (xorder < 0) {
         movx -= ACCEL;
         // going opposite side, quick breaking
-        if (movx > 0) movx -= ACCEL;
+        if (movx > 0)
+            movx -= ACCEL;
 
-        if (movx <= -MAX_SPEED) movx = -MAX_SPEED;
+        if (movx <= -MAX_SPEED)
+            movx = -MAX_SPEED;
     }
-    else
-    {
+    else {
         if ((movx < FIX32(0.1)) && (movx > FIX32(-0.1)))
             movx = 0;
         else if ((movx < FIX32(0.3)) && (movx > FIX32(-0.3)))
@@ -120,27 +118,23 @@ static void updatePhysic()
     posx += movx;
     posy += movy;
 
-    if (movy)
-    {
-        if (posy > MAX_POSY)
-        {
+    if (movy) {
+        if (posy > MAX_POSY) {
             posy = MAX_POSY;
             movy = 0;
         }
-        else movy += GRAVITY;
+        else
+            movy += GRAVITY;
     }
 
-    if (posx >= MAX_POSX)
-    {
+    if (posx >= MAX_POSX) {
         posx = MAX_POSX;
         movx = 0;
     }
-    else if (posx <= MIN_POSX)
-    {
+    else if (posx <= MIN_POSX) {
         posx = MIN_POSX;
         movx = 0;
     }
-
   
     fix32 px_scr, py_scr;
     fix32 npx_cam, npy_cam;
@@ -150,18 +144,28 @@ static void updatePhysic()
     py_scr = posy - camposy;
 
     // calculate new camera position
-    if (px_scr > FIX32(240)) npx_cam = posx - FIX32(240);
-    else if (px_scr < FIX32(40)) npx_cam = posx - FIX32(40);
-    else npx_cam = camposx;
-    if (py_scr > FIX32(160)) npy_cam = posy - FIX32(160);
-    else if (py_scr < FIX32(100)) npy_cam = posy - FIX32(100);
-    else npy_cam = camposy;
+    if (px_scr > FIX32(140))
+        npx_cam = posx - FIX32(140);
+    else if (px_scr < FIX32(140))
+        npx_cam = posx - FIX32(140);
+    else
+        npx_cam = camposx;
+    if (py_scr > FIX32(160))
+        npy_cam = posy - FIX32(160);
+    else if (py_scr < FIX32(100))
+        npy_cam = posy - FIX32(100);
+    else
+        npy_cam = camposy;
 
     // clip camera position
-    if (npx_cam < FIX32(0)) npx_cam = FIX32(0);
-    else if (npx_cam > FIX32(600)) npx_cam = FIX32(600);
-    if (npy_cam < FIX32(0)) npy_cam = FIX32(0);
-    else if (npy_cam > FIX32(100)) npy_cam = FIX32(100);
+    if (npx_cam < FIX32(0))
+        npx_cam = FIX32(0);
+    else if (npx_cam > FIX32(600))
+        npx_cam = FIX32(600);
+    if (npy_cam < FIX32(0))
+        npy_cam = FIX32(0);
+    else if (npy_cam > FIX32(100))
+        npy_cam = FIX32(100);
 
     // set camera position
     updateCamera(npx_cam, npy_cam);
@@ -170,16 +174,13 @@ static void updatePhysic()
     SPR_setPosition(spr_sonic, fix32ToInt(posx - camposx), fix32ToInt(posy - camposy));
   }
 
-static void updateAnim()
-{
+static void updateAnim() {
     // jumping
-    if (movy) SPR_setAnim(spr_sonic, ANIM_ROLL);
-    else
-    {
-        if (((movx >= BRAKE_SPEED) && (xorder < 0)) || ((movx <= -BRAKE_SPEED) && (xorder > 0)))
-        {
-            if (spr_sonic->animInd != ANIM_BRAKE)
-            {
+    if (movy)
+        SPR_setAnim(spr_sonic, ANIM_ROLL);
+    else {
+        if (((movx >= BRAKE_SPEED) && (xorder < 0)) || ((movx <= -BRAKE_SPEED) && (xorder > 0))) {
+            if (spr_sonic->animInd != ANIM_BRAKE) {
                 SPR_setAnim(spr_sonic, ANIM_BRAKE);
             }
         }
@@ -187,8 +188,7 @@ static void updateAnim()
             SPR_setAnim(spr_sonic, ANIM_RUN);
         else if (movx != 0)
             SPR_setAnim(spr_sonic, ANIM_WALK);
-        else
-        {
+        else {
             if (yorder < 0)
                 SPR_setAnim(spr_sonic, ANIM_UP);
             else if (yorder > 0)
@@ -198,15 +198,14 @@ static void updateAnim()
         }
     }
 
-    if (movx > 0) SPR_setHFlip(spr_sonic, FALSE);
-    else if (movx < 0) SPR_setHFlip(spr_sonic, TRUE);
-
+    if (movx > 0) 
+        SPR_setHFlip(spr_sonic, FALSE);
+    else if (movx < 0)
+        SPR_setHFlip(spr_sonic, TRUE);
 }
 
-static void updateCamera(fix32 x, fix32 y)
-{
-    if ((x != camposx) || (y != camposy))
-    {
+static void updateCamera(fix32 x, fix32 y) {
+    if ((x != camposx) || (y != camposy)) {
         camposx = x;
         camposy = y;
         VDP_setHorizontalScroll(PLAN_A, fix32ToInt(-camposx));
@@ -214,33 +213,32 @@ static void updateCamera(fix32 x, fix32 y)
     }
 }
 
-
-static void handleInput()
-{
+static void handleInput() {
     u16 value = JOY_readJoypad(JOY_1);
 
-    if (value & BUTTON_UP) yorder = -1;
-    else if (value & BUTTON_DOWN) yorder = +1;
-    else yorder = 0;
+    if (value & BUTTON_UP)
+        yorder = -1;
+    else if (value & BUTTON_DOWN)
+        yorder = +1;
+    else
+        yorder = 0;
 
-    if (value & BUTTON_LEFT) xorder = -1;
-    else if (value & BUTTON_RIGHT) xorder = +1;
-    else xorder = 0;
-
+    if (value & BUTTON_LEFT)
+        xorder = -1;
+    else if (value & BUTTON_RIGHT)
+        xorder = +1;
+    else
+        xorder = 0;
 }
 
-static void joyEvent(u16 joy, u16 changed, u16 state)
-{
+static void joyEvent(u16 joy, u16 changed, u16 state) {
     // START button state changed
-    if (changed & BUTTON_START)
-    {
+    if (changed & BUTTON_START) {
 
     }
 
-    if (changed & state & (BUTTON_A | BUTTON_B | BUTTON_C))
-    {
-        if (movy == 0)
-        {
+    if (changed & state & (BUTTON_A | BUTTON_B | BUTTON_C)) {
+        if (movy == 0) {
             movy = JUMP_SPEED;
         }
     }
