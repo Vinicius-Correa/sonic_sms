@@ -2,5 +2,6 @@
 
 Pendencies:
 1. Generate collision arrays;
-2. Create character moves, physics engine and the camera follows the player;
-3. Insert sound efects and music.
+2. Load the scenario dynamically;
+3. Improve physics engine;
+4. Insert sound efects and music.
