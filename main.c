@@ -23,7 +23,7 @@
 #define DE_ACCEL        FIX32(0.15)
 
 #define MIN_POSX        FIX32(10)
-#define MAX_POSX        FIX32(800)
+#define MAX_POSX        FIX32(3590)
 #define MAX_POSY        FIX32(156)
 
 // forward
@@ -31,6 +31,7 @@ static void handleInput();
 static void joyEvent(u16 joy, u16 changed, u16 state);
 
 static void updatePhysic();
+static void updateMap();
 static void updateAnim();
 static void updateCamera(fix32 x, fix32 y);
 
@@ -41,10 +42,15 @@ fix32 camposx;
 fix32 camposy;
 fix32 posx;
 fix32 posy;
+fix32 posx_a = FIX32(160);
+fix32 posy_a;
 fix32 movx;
 fix32 movy;
 s16 xorder;
 s16 yorder;
+fix32 tile_x = -4;
+fix32 map_x = 60;
+char texto[5];
 
 int main() {
     u16 palette[64];
@@ -66,7 +72,7 @@ int main() {
     VDP_setPalette(PAL1, cenario.palette->data);
     VDP_loadTileSet(cenario.tileset, 10, TRUE);
     map = unpackMap(cenario.map, NULL);
-    VDP_setMapEx(PLAN_A, map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE,10), 0, 0, 0, 13, 64, 32);
+    VDP_setMapEx(PLAN_A, map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE,10), 0, 0, 0, 13, 64, 28);
 
     // init sonic sprite
     spr_sonic = SPR_addSprite(&sonic_sprite, 128, 153, TILE_ATTR(PAL2, TRUE, FALSE,  FALSE));
@@ -77,6 +83,7 @@ int main() {
     while(TRUE) {
         handleInput();
         updatePhysic();
+        updateMap();
         updateAnim();
         SPR_update();
         VDP_waitVSync();
@@ -160,8 +167,8 @@ static void updatePhysic() {
     // clip camera position
     if (npx_cam < FIX32(0))
         npx_cam = FIX32(0);
-    else if (npx_cam > FIX32(600))
-        npx_cam = FIX32(600);
+    else if (npx_cam > MAX_POSX - FIX32(320))
+        npx_cam = MAX_POSX - FIX32(320);
     if (npy_cam < FIX32(0))
         npy_cam = FIX32(0);
     else if (npy_cam > FIX32(100))
@@ -171,8 +178,28 @@ static void updatePhysic() {
     updateCamera(npx_cam, npy_cam);
 
     // set sprites position
-    SPR_setPosition(spr_sonic, fix32ToInt(posx - camposx), fix32ToInt(posy - camposy));
+    SPR_setPosition(spr_sonic, fix32ToInt(px_scr), fix32ToInt(py_scr));
   }
+
+static void updateMap() {
+    if (posx >= FIX32(160) && posx <= MAX_POSX - FIX32(160)) {
+        if (posx - posx_a >= FIX32(32)) {
+            posx_a = posx;
+            tile_x = tile_x + 4;
+            map_x = map_x + 4;
+            if (tile_x > 63)
+                tile_x = 0;
+        }
+        else if (posx_a - posx >= FIX32(64)) {
+            posx_a = posx;
+            tile_x = tile_x - 4;
+            map_x = map_x - 4;
+            if (tile_x < 0)
+                tile_x = 60;
+        }
+    VDP_setMapEx(PLAN_A, map, TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE,10), tile_x, 0, map_x, 13, 8, 28);
+    }
+}
 
 static void updateAnim() {
     // jumping
